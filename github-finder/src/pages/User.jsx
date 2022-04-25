@@ -1,10 +1,10 @@
-import { FaCodepen, FaStore, FaUserFriends, FaUsers } from "react-icons/fa";
-import { useEffect, useContext } from "react";
-import GithubContext from "../context/github/GithubContext";
-import { Link } from "react-router-dom";
-import Spinner from "../components/layout/Spinner";
-import RepoList from "../components/repos/RepoList";
-import { useParams } from "react-router-dom";
+import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa';
+import { useEffect, useContext } from 'react';
+import GithubContext from '../context/github/GithubContext';
+import { Link } from 'react-router-dom';
+import Spinner from '../components/layout/Spinner';
+import RepoList from '../components/repos/RepoList';
+import { useParams } from 'react-router-dom';
 
 export default function User() {
   const { getUser, user, loading, getUserRepos, repos } = useContext(GithubContext);

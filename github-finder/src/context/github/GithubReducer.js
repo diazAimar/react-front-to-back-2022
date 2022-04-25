@@ -2,29 +2,29 @@ const githubReducer = (state, action) => {
   /* The spread operator: 
 	Spread syntax (...) allows an iterable such as an array expression or string to be expanded in places where zero or more arguments (for function calls) or elements (for array literals) are expected, or an object expression to be expanded in places where zero or more key-value pairs (for object literals) are expected. */
   switch (action.type) {
-    case "GET_USERS":
+    case 'GET_USERS':
       return {
         ...state,
         users: action.payload,
         loading: false,
       };
-    case "GET_USER":
+    case 'GET_USER':
       return {
         ...state,
         user: action.payload,
         loading: false,
       };
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return {
         ...state,
         loading: true,
       };
-    case "CLEAR_USERS":
+    case 'CLEAR_USERS':
       return {
         ...state,
         users: [],
       };
-    case "GET_REPOS":
+    case 'GET_REPOS':
       return {
         ...state,
         repos: action.payload,
