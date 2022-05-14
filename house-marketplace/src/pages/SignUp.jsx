@@ -85,7 +85,7 @@ export default function SignUp() {
                 onClick={() => setShowPassword((prevState) => !prevState)}
               />
             </div>
-            <Link to="/forgot-passowrd" className="forgotPasswordLink">
+            <Link to="/forgot-password" className="forgotPasswordLink">
               Forgot Password
             </Link>
             <div className="signUpBar">
