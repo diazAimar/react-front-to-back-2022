@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 const initialFormState = {
   type: 'rent',
@@ -56,9 +57,39 @@ export default function CreateListing() {
     return unsubscribe;
   }, [auth, navigate]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setLoading(true);
+    if (discountedPrice >= regularPrice) {
+      setLoading(false);
+      toast.error('Discounted price needs to be less than regular price');
+    }
+    if (images.length > 6) {
+      setLoading(false);
+      toast.error('Max of 6 images');
+    }
+    let geolocation = {};
+    let location;
+    if (geolocationEnabled) {
+      const response = await fetch(
+        `https://api.geoapify.com/v1/geocode/search?text=${address}&format=json&apiKey=${process.env.REACT_APP_GEOCODE_API_KEY}`
+      );
+      const data = await response.json();
+      console.log(data);
+      geolocation.lat = data.results[0]?.lat ?? 0;
+      geolocation.lng = data.results[0]?.lon ?? 0;
+      location = data.results.length === 0 ? undefined : data.results[0].formatted;
+      if (location === undefined || location.includes('undefined')) {
+        setLoading(false);
+        toast.error('Please enter a correct address');
+        return;
+      }
+    } else {
+      geolocation.lat = latitude;
+      geolocation.lng = longitude;
+      location = address;
+    }
+    setLoading(false);
   };
 
   const onMutate = (e) => {
