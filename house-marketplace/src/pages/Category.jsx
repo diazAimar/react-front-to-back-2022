@@ -9,6 +9,7 @@ import ListingItem from '../components/ListingItem';
 export default function Category() {
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastFetchedListing, setLastFetchedListing] = useState(null);
   const params = useParams();
 
   useEffect(() => {
@@ -25,6 +26,8 @@ export default function Category() {
         );
         /* Execute query */
         const querySnap = await getDocs(q);
+        const lastVisibile = querySnap.docs[querySnap.docs.length - 1];
+        setLastFetchedListing(lastVisibile);
         const listings = [];
         querySnap.forEach((doc) => {
           return listings.push({
@@ -40,6 +43,38 @@ export default function Category() {
     };
     fetchListings();
   }, [params.categoryName]);
+
+  /* Pagination/Load More */
+  const onFetchMoreListings = async () => {
+    try {
+      /* Get Reference */
+      const listingRef = collection(db, 'listings');
+      /* Create a query */
+      const q = query(
+        listingRef,
+        where('type', '==', params.categoryName),
+        orderBy('timestamp', 'desc'),
+        startAfter(lastFetchedListing),
+        limit(10)
+      );
+      /* Execute query */
+      const querySnap = await getDocs(q);
+      const lastVisibile = querySnap.docs[querySnap.docs.length - 1];
+      setLastFetchedListing(lastVisibile);
+      const listings = [];
+      querySnap.forEach((doc) => {
+        return listings.push({
+          id: doc.id,
+          data: doc.data(),
+        });
+      });
+      setListings((prevState) => [...prevState, ...listings]);
+      setLoading(false);
+    } catch (error) {
+      toast.error('Could not fetch listings');
+    }
+  };
+
   return (
     <div className="category">
       <header>
@@ -58,6 +93,14 @@ export default function Category() {
               ))}
             </ul>
           </main>
+
+          <br />
+          <br />
+          {lastFetchedListing && (
+            <p className="loadMore" onClick={onFetchMoreListings}>
+              Load More
+            </p>
+          )}
         </>
       ) : (
         <p>No listings for {params.categoryName}</p>
